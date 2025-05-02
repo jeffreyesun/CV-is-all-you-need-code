@@ -21,8 +21,8 @@ function get_V_end_KS(K_bar, Λ_start, V_params_KS, a0, a1)
     return V_end = Π[Ai,:]'V_next
 end
 
-function get_V_end_KS(as::ModelData, Λ_start, V_params_KS, a0, a1)
-    return get_V_end_KS(get_K_bar(as), Λ_start, V_params_KS, a0, a1)
+function get_V_end_KS(md::ModelData, Λ_start, V_params_KS, a0, a1)
+    return get_V_end_KS(get_K_bar(md), Λ_start, V_params_KS, a0, a1)
 end
 
 # Update a #

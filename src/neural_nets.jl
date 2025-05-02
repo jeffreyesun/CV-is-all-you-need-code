@@ -103,6 +103,6 @@ function (V_net::VNet)(λ_start, Ai)
 
     return reshape(V_net((GM, HH_in_mat, [Ai])), STATE_IDXs)
 end
-(V_net::VNet)(as::ModelData, Ai::Int) = V_net(as.λ_start, Ai)
+(V_net::VNet)(md::ModelData, Ai::Int) = V_net(md.λ_start, Ai)
 
 Flux.@layer VNet

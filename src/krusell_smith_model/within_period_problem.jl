@@ -23,15 +23,15 @@ end
 #--------#
 
 get_K_bar(λ_start) = sum(λ_start .* WEALTH_GRID)
-get_K_bar(as::ModelData) = get_K_bar(as.λ_start)
+get_K_bar(md::ModelData) = get_K_bar(md.λ_start)
 get_L_bar(λ_start) = sum(λ_start .* Z_GRID)
-get_L_bar(as::ModelData) = get_L_bar(as.λ_start)
+get_L_bar(md::ModelData) = get_L_bar(md.λ_start)
 
-function get_wealth_postinc(as, A, params)
-    (;λ_start, wealth_postinc_k_preinc) = as
+function get_wealth_postinc(md, A, params)
+    (;λ_start, wealth_postinc_k_preinc) = md
     (;α, δ) = params
-    K = get_K_bar(as)
-    L = get_L_bar(as)
+    K = get_K_bar(md)
+    L = get_L_bar(md)
     w = (1-α)*A*(K/L)^α
     r = α*A*(K/L)^(α-1)
     
@@ -70,12 +70,12 @@ function iterate_λ(λ_start, sim_prealloc)
     return λ_end
 end
 
-function solve_within_period_problem!(as::ModelData, V_end, Λ_start, params)
+function solve_within_period_problem!(md::ModelData, V_end, Λ_start, params)
     (;Ai) = Λ_start
-    (;λ_start) = as
+    (;λ_start) = md
     (;Ai, λ_start) = Λ_start
-    V_start = iterate_V(V_end, Ai, as, params)
-    λ_end = iterate_λ(λ_start, as)
+    V_start = iterate_V(V_end, Ai, md, params)
+    λ_end = iterate_λ(λ_start, md)
     Λ_end = (;Ai, λ_end)
     return V_start, Λ_end
 end

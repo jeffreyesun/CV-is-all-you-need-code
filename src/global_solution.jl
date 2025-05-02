@@ -12,7 +12,7 @@ run_neural_VFI - Run the neural VFI algorithm
 function pretrain_V!(V_net, params; T=100, sample_t=50:100)
     pre_opt = Flux.setup(Adam(1e-8), V_net)
 
-    as, path_data = simulate_path_dumbV(params, T, sample_t)
+    md, path_data = simulate_path_dumbV(params, T, sample_t)
     (;λ_start_path, V_end_path, Ai_path) = path_data
     data = zip(λ_start_path, Ai_path, V_end_path)
 
@@ -23,7 +23,7 @@ function pretrain_V!(V_net, params; T=100, sample_t=50:100)
 end
 
 function train_epoch!(V_net, opt, params; T=100, sample_t=50:100, init_state=nothing)
-    as, Λ_end, path_data = simulate_path_neuralV(params, V_net, T, sample_t; init_state)
+    md, Λ_end, path_data = simulate_path_neuralV(params, V_net, T, sample_t; init_state)
     (;V_end_lookahead_path) = path_data
 
     (;λ_start_path, Ai_path) = path_data
@@ -40,7 +40,7 @@ function train_epoch!(V_net, opt, params; T=100, sample_t=50:100, init_state=not
     mses = (Flux.mse(V_net(d[1], d[2]), d[3]) for d=data)
     var_V = mean(var(vec(d[3]), ProbabilityWeights(vec(d[1]))) for d=data)
     last_error = mean(mses)/var_V
-    init_state = (as, apply_aggregate_shock(Λ_end))
+    init_state = (md, apply_aggregate_shock(Λ_end))
     return init_state, last_error
 end
 
@@ -57,8 +57,8 @@ function run_neural_VFI(V_net, params; n_epochs=500)
     init_state = nothing
     for i=1:10
         if i%10 == 0
-            as, Λ_end, _ = simulate_path_neuralV(params, V_net, 1000, [])
-            init_state = (as, apply_aggregate_shock(Λ_end))
+            md, Λ_end, _ = simulate_path_neuralV(params, V_net, 1000, [])
+            init_state = (md, apply_aggregate_shock(Λ_end))
         end
         init_state, err = train_epoch!(V_net, opt, params; T=200, sample_t=100:2:200, init_state)
         push!(errors, err)
@@ -73,9 +73,9 @@ function run_neural_VFI(V_net, params; n_epochs=500)
 
     for i=1:n_epochs
         if i%10 == 1
-            as, Λ_end, _ = simulate_path_neuralV(params, V_net, 1000, []; init_state)
-            as.λ_start ./= sum(as.λ_start)
-            init_state = (as, apply_aggregate_shock(Λ_end))
+            md, Λ_end, _ = simulate_path_neuralV(params, V_net, 1000, []; init_state)
+            md.λ_start ./= sum(md.λ_start)
+            init_state = (md, apply_aggregate_shock(Λ_end))
         end
         init_state, err = train_epoch!(V_net, opt, params; T=100, sample_t=1:100, init_state)
         push!(errors, err)

@@ -99,29 +99,29 @@ so that these values cannot be relied upon after the entire period has been solv
 end
 ModelData(; kwargs...) = ModelData{FLOAT_PRECISION}(; kwargs...)
 
-function precompute!(as::ModelData, params::Params)
+function precompute!(md::ModelData, params::Params)
     u_indirect_big = get_indirect_u(params)
-    Threads.@threads for ki=1:N_K
-        as.u_indirect[ki] .= @view(u_indirect_big[ki,1,:])
+    @threads for ki=1:N_K
+        md.u_indirect[ki] .= @view(u_indirect_big[ki,1,:])
     end
 end
 
 function ModelData(params::Params; kwargs...)
-    as = ModelData{FLOAT_PRECISION}(; kwargs...)
-    precompute!(as, params)
-    return as
+    md = ModelData{FLOAT_PRECISION}(; kwargs...)
+    precompute!(md, params)
+    return md
 end
 
 function initialize_model(params)
-    as = ModelData(params)
-    as.V_end .= rand(FLOAT_PRECISION, STATE_IDXs) .* 1000
-    as.λ_start .= rand(FLOAT_PRECISION, STATE_IDXs)
-    as.λ_start[end,:] .= 0
-    as.λ_start ./= sum(as.λ_start)
+    md = ModelData(params)
+    md.V_end .= rand(FLOAT_PRECISION, STATE_IDXs) .* 1000
+    md.λ_start .= rand(FLOAT_PRECISION, STATE_IDXs)
+    md.λ_start[end,:] .= 0
+    md.λ_start ./= sum(md.λ_start)
     Ai = 2
-    Λ_start = (;Ai, λ_start=as.λ_start)
+    Λ_start = (;Ai, λ_start=md.λ_start)
     Λ_start.λ_start
-    return as, Λ_start
+    return md, Λ_start
 end
 
 function initialize_path()

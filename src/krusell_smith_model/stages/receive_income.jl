@@ -18,7 +18,7 @@ function get_V_income(V_consume, prealloc, A, params)
 
     # We have V_consume in terms of wealth_postinc (= wealth_consume)
     # Put that in terms of wealth_preinc by resampling at wealth_postinc for each wealth_preinc
-    Threads.@threads for zi=1:N_Z
+    @threads for zi=1:N_Z
         @views reinterpolate!(
             V_income[:,zi], V_consume[:,zi], WEALTH_GRID_FLAT, wealth_postinc_k_preinc[:,zi],
             Val(-Inf)
@@ -35,7 +35,7 @@ end
 function get_λ_prec(μ_start, sim_prealloc)
     (;wealth_postinc_k_preinc, λ_prec) = sim_prealloc
 
-    Threads.@threads for zi=1:N_Z
+    @threads for zi=1:N_Z
         # Convert λ_postmarket (over pre-income wealth)
         # to λ_prec (over post-income wealth)
         @views convert_distribution!(

@@ -18,7 +18,7 @@ V_consume(x) = max_{g,h} u(g,h,ℓ(x)) + V_postconsume(x'(x,g,h))
 function get_V_consume(V_postconsume, prealloc)
     (;V_consume, wealthi_postc_k_prec, u_indirect) = prealloc
 
-    Threads.@threads for zi=1:N_Z
+    @threads for zi=1:N_Z
         @views k1_argmax!(
             V_consume[:,zi],
             wealthi_postc_k_prec[:,zi],
@@ -37,7 +37,7 @@ function get_λ_preshock(λ_prec, sim_prealloc)
 
     λ_preshock .= 0
 
-    Threads.@threads for zi=1:N_Z
+    @threads for zi=1:N_Z
         for ki=1:N_K
             k1i = wealthi_postc_k_prec[ki,zi]
             λ_preshock[k1i,zi] += λ_prec[ki,zi]

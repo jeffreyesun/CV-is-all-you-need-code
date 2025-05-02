@@ -108,7 +108,7 @@ a1 = FLOAT_PRECISION[0.9, 0.9]
 #TODO big-T is different here, fix!
 KS_errors = []
 el_ks_500 = @elapsed for i=1:500
-    as, path_data = simulate_path_KSV(params, V_start_big, a0, a1)
+    md, path_data = simulate_path_KSV(params, V_start_big, a0, a1)
     a0, a1, V_start_big_new = update_aV(path_data)
 
     error = norm(V_start_big .- V_start_big_new)
@@ -133,7 +133,7 @@ a1 = FLOAT_PRECISION[0.9, 0.9]
 
 KS_errors = []
 el_ks_10k = @elapsed for i=1:10_000
-    as, path_data = simulate_path_KSV(params, V_start_big, a0, a1)
+    md, path_data = simulate_path_KSV(params, V_start_big, a0, a1)
     a0, a1, V_start_big_new = update_aV(path_data)
 
     error = norm(V_start_big .- V_start_big_new)
