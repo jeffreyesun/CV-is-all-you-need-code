@@ -87,7 +87,8 @@ struct VNet{M,C,S}
     GM_net::C
     V_net::S
 end
-function VNet(wide::Bool, deep::Bool)
+function VNet(;wide=false, deep=true, seed=9483)
+    Random.seed!(seed)
     HH_in_mat = get_HH_in_mat()
     GM_net = get_GM_net()
     V_net = get_V_net(Val(wide), Val(deep))
@@ -104,4 +105,4 @@ function (V_net::VNet)(λ_start, Ai)
 end
 (V_net::VNet)(as::ModelData, Ai::Int) = V_net(as.λ_start, Ai)
 
-Flux.@functor VNet
+Flux.@layer VNet

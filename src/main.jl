@@ -2,7 +2,7 @@
 using LinearAlgebra
 using Statistics
 using StatsBase
-using Accessors
+using Random
 import Base: tail
 import Base.Threads: @threads
 

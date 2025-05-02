@@ -70,7 +70,7 @@ function simulate_path_neuralV(params::Params, V_net::VNet, T::Int, sample_t; in
         try
             V_start, Λ_end = solve_within_period_problem!(as, V_end, Λ_start, params)
         catch e
-            throw(ArgumentError("V_net is not feasible, please reinitialize and try again."))
+            throw("V_net is not feasible, please reinitialize and try again.")
         end
         # Possibly sample state and lookahead-predicted V_end
         t in sample_t && compute_and_store_training_data!(path_data, as, Λ_start, V_net, params)
