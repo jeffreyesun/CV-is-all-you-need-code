@@ -4,7 +4,6 @@ using Statistics
 using StatsBase
 using Random
 
-
 ##############
 # Load Model #
 ##############
