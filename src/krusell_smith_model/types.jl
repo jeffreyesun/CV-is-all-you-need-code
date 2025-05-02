@@ -29,7 +29,7 @@ import Random: seed!
 end
 
 const Π = [0.85 0.15; 0.1 0.9]
-const A_vals = Float32[0.5, 1.0]
+const A_GRID = Float32[0.5, 1.0]
 const β = 0.98 |> FLOAT_PRECISION
 
 

@@ -1,10 +1,17 @@
 module KrusellSmithModel
 
-export iterate_V, iterate_λ
-export solve_within_period_problem!, apply_aggregate_shock
+# Constants
 export FLOAT_PRECISION
 export N_K, N_Z, STATE_IDXs
 export K_DIM, Z_DIM, N_DIMS
+export Π, A_GRID, β
+# Data Structures
+export Params, ModelData
+# Functions
+export initialize_model, initialize_path
+export iterate_V, iterate_λ
+export solve_within_period_problem!, apply_aggregate_shock
+export add_state_to_sample!
 
 using LinearAlgebra
 using Statistics
@@ -22,7 +29,6 @@ const FLOAT_PRECISION = Float32
 # State Space #
 ###############
 
-# Grid sizetarget_moments = get_empirical_aggregate_moments()
 const N_K = 65
 const N_Z = 3
 const STATE_IDXs = (N_K, N_Z)

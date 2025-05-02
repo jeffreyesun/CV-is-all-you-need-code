@@ -107,7 +107,7 @@ function get_V_end_lookahead(md, λ_start_next, Ai, V_net, params)
     # and compute the expected value of V_end, taking expectation over the
     # A
     V_end_lookahead = zeros(FLOAT_PRECISION, STATE_IDXs)
-    for Ai_next in 1:length(A_vals)
+    for Ai_next in 1:length(A_GRID)
         V_start_next = get_V_start_next(md, λ_start_next, Ai_next, V_net, params)
         V_end_lookahead += Π[Ai, Ai_next] * V_start_next
     end

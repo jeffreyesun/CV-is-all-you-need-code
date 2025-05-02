@@ -48,7 +48,7 @@ end
 #----------#
 function iterate_V(V_end, Ai, prealloc, params)
     prealloc.V_end .= V_end
-    A = A_vals[Ai]
+    A = A_GRID[Ai]
     
     V_preshock = get_V_preshock(V_end, prealloc)
     V_consume = get_V_consume(V_preshock, prealloc)
