@@ -20,37 +20,8 @@ get_GM_net() = Chain(
     Dense(2, 10, elu),
     Dense(10, 10, elu)
 )
-get_V_net(::Val{false}, ::Val{false}) = Chain(
-    Parallel((a,b,c)->a.+b.+c, (
-        Dense(10, 10, elu),
-        Dense(2, 10, elu),
-        Chain(
-            Dense(1, 10, elu),
-            Dense(10,10,elu),
-        ),
-    )),
-    Dense(10, 8, elu),
-    Dense(8, 5, elu),
-    Dense(5, 1),
-    Scale([100], [500]),
-)
 
-get_V_net(::Val{true}, ::Val{false}) = Chain(
-    Parallel((a,b,c)->a.+b.+c, (
-        Dense(10, 10, elu),
-        Dense(2, 10, elu),
-        Chain(
-            Dense(1, 10, elu),
-            Dense(10,10,elu),
-        ),
-    )),
-    Dense(10, 15, elu),
-    Dense(15, 10, elu),
-    Dense(10, 1),
-    Scale([100], [500]),
-)
-
-get_V_net(::Val{false}, ::Val{true}) = Chain(
+get_V_net() = Chain(
     Parallel((a,b,c)->a.+b.+c, (
         Dense(10, 10, elu),
         Dense(2, 10, elu),
@@ -66,32 +37,16 @@ get_V_net(::Val{false}, ::Val{true}) = Chain(
     Scale([100], [500]),
 )
 
-get_V_net(::Val{true}, ::Val{true}) = Chain(
-    Parallel((a,b,c)->a.+b.+c, (
-        Dense(10, 10, elu),
-        Dense(2, 10, elu),
-        Chain(
-            Dense(1, 10, elu),
-            Dense(10,10,elu),
-        ),
-    )),
-    Dense(10, 15, elu),
-    Dense(15, 15, elu),
-    Dense(15, 10, elu),
-    Dense(10, 1),
-    Scale([100], [500]),
-)
-
 struct VNet{M,C,S}
     HH_in_mat::M
     GM_net::C
     V_net::S
 end
-function VNet(;wide=false, deep=true, seed=9483)
+function VNet(;seed=9483)
     Random.seed!(seed)
     HH_in_mat = get_HH_in_mat()
     GM_net = get_GM_net()
-    V_net = get_V_net(Val(wide), Val(deep))
+    V_net = get_V_net()
     return VNet(HH_in_mat, GM_net, V_net)
 end
 Flux.trainable(V_net::VNet) = (;V_net.GM_net, V_net.V_net)

@@ -1,3 +1,10 @@
+
+"""
+Solve the Krusell-Smith model using the Krusell-Smith method.
+"""
+
+import .KrusellSmithModel: get_K_bar
+
 const N_K_BAR = 5
 const K_BAR_GRID = Vector{FLOAT_PRECISION}(1000:500:3000)
 const LOG_K_BAR_GRID = reshape(log.(K_BAR_GRID), (1,1,N_K_BAR))
@@ -84,4 +91,32 @@ function simulate_path_KSV(params, V_params, a0, a1; T=1000, sample_t=100:T)
         Λ_start = apply_aggregate_shock(Λ_end)
     end
     return md, path_data
+end
+
+function run_krusell_smith_method(params; seed=9581)
+
+    Random.seed!(seed)
+
+    V_start_big = rand(FLOAT_PRECISION, (N_K, N_Z, N_K_BAR, N_A))
+    a0 = FLOAT_PRECISION[0.7601, 0.7824]
+    a1 = FLOAT_PRECISION[0.9, 0.9]
+
+    KS_errors = []
+    elapsed_times = @elapsed for i=1:10_000
+        md, path_data = simulate_path_KSV(params, V_start_big, a0, a1)
+        a0, a1, V_start_big_new = update_aV(path_data)
+
+        error = norm(V_start_big .- V_start_big_new)
+        V_start_big = V_start_big_new
+
+        (;V_end_path, λ_start_path) = path_data
+        var_V = mean(var(vec(V_end), ProbabilityWeights(vec(λ_start))) for (V_end, λ_start)=zip(V_end_path, λ_start_path))
+        error /= var_V
+        push!(KS_errors, error)
+
+        print(i, " ")
+        println(error)
+    end
+
+    return elapsed_times, KS_errors
 end

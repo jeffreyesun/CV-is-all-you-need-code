@@ -3,7 +3,6 @@ using LinearAlgebra
 using Statistics
 using StatsBase
 using Random
-import Base.Threads: @threads
 
 
 ##############
@@ -11,6 +10,7 @@ import Base.Threads: @threads
 ##############
 include("KrusellSmithModel/KrusellSmithModel.jl")
 using .KrusellSmithModel
-
 include("NeuralVFISolution/NeuralVFISolution.jl")
+#using .NeuralVFISolution
+
 include("krusell_smith_solution.jl")

@@ -81,14 +81,23 @@ end
 # Guessing V_start_next from neural net #
 #---------------------------------------#
 """
-Given a state 
+Given a state Λ_start and a neural network V_net, predict the value function at the *start* of the period, V_start.
+
+In the slides, `get_predicted_V_start` is called ̃Φ₂ (\$\\tilde\\Phi_2\$).
 """
 function get_predicted_V_start(md, Λ_start, V_net, params)
     @assert md.λ_start == Λ_start.λ_start
-    V_end_next = V_net(Λ_start)
-    return iterate_V(V_end_next, Λ_start.Ai, md, params)
+    V_end = V_net(Λ_start)
+    return V_start = iterate_V(V_end, Λ_start.Ai, md, params)
 end
 
+"""
+Given a start-of-next-period household distribution λ_start_next 
+and a current-period aggregate shock Ai, compute the end-of-current-period
+V_end implied by the lookahead operator.
+
+In the slides, V_end_lookahead is called LΠ(Λ_start).
+"""
 function get_V_end_lookahead(md, λ_start_next, Ai, V_net, params)
     # Save current state and V_end
     V_end_save = copy(md.V_end)
@@ -108,8 +117,8 @@ function get_V_end_lookahead(md, λ_start_next, Ai, V_net, params)
     end
 
     # Restore state and V_end to current period (rather than next period)
-
     md.λ_start .= λ_start_save
     iterate_V(V_end_save, Ai, md, params)
+
     return V_end_lookahead
 end
