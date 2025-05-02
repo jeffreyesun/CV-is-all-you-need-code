@@ -21,4 +21,4 @@ This solves the model once using the Neural VFI method and once using the Krusel
 
 The module `KrusselSmithModel` contains an optimized implementation of the Within-Period Problem (WPP) of the Krusell-Smith model. This is used by both the Neural VFI implementation in `NeuralVFISolution` and the Krusell-Smith method implementation in `krusell_smith_solution.jl`.
 
-Currently, the most up-to-date overview of this method is the slide deck located (here)[https://jeffreyesun.com/CV_is_all_you_need_slides.pdf].
+Currently, the most up-to-date overview of this method is the slide deck located [here](https://jeffreyesun.com/CV_is_all_you_need_slides.pdf).
