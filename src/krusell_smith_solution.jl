@@ -63,3 +63,25 @@ function update_aV(path_data)
 
     return a0, a1, V_params_KS
 end
+
+"""
+Simulate data using the Krusell-Smith value function approximator to predict V_end.
+"""
+function simulate_path_KSV(params, V_params, a0, a1; T=1000, sample_t=100:T)
+    # Initialize model
+    md, Λ_start = initialize_model(params)
+    # Initialize sample data
+    path_data = initialize_path()
+
+    for t=1:T
+        # Predict V_end using the Krusell-Smith value function approximator
+        V_end = get_V_end_KS(md, Λ_start, V_params, a0, a1)
+        # Simulate period forward
+        V_start, Λ_end = solve_within_period_problem!(md, V_end, Λ_start, params)
+        # Possibly sample state
+        t in sample_t && add_state_to_sample!(path_data, md, Λ_end.Ai)
+        # Update state
+        Λ_start = apply_aggregate_shock(Λ_end)
+    end
+    return md, path_data
+end

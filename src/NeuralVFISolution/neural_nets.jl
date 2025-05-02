@@ -96,13 +96,13 @@ function VNet(;wide=false, deep=true, seed=9483)
 end
 Flux.trainable(V_net::VNet) = (;V_net.GM_net, V_net.V_net)
 
-function (V_net::VNet)(λ_start, Ai)
+function (V_net::VNet)(Λ_start)
     (;HH_in_mat, GM_net, V_net) = V_net
+    (;λ_start, Ai) = Λ_start
     GM_mat = GM_net(HH_in_mat)
     GM = GM_mat*vec(λ_start)
 
     return reshape(V_net((GM, HH_in_mat, [Ai])), STATE_IDXs)
 end
-(V_net::VNet)(md::ModelData, Ai::Int) = V_net(md.λ_start, Ai)
 
 Flux.@layer VNet

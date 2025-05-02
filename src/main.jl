@@ -9,10 +9,8 @@ import Base.Threads: @threads
 ##############
 # Load Model #
 ##############
-include("krusell_smith_model/KrusellSmithModel.jl")
+include("KrusellSmithModel/KrusellSmithModel.jl")
 using .KrusellSmithModel
 
-include("neural_nets.jl")
-include("simulation.jl")
-include("global_solution.jl")
+include("NeuralVFISolution/NeuralVFISolution.jl")
 include("krusell_smith_solution.jl")

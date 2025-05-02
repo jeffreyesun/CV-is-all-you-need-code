@@ -17,7 +17,8 @@ function pretrain_V!(V_net, params; T=100, sample_t=50:100)
     data = zip(λ_start_path, Ai_path, V_end_path)
 
     Flux.train!(V_net, data, pre_opt) do V_net, λ_start, Ai, V_end
-        return Flux.mse(vec(V_net(λ_start, Ai)), vec(V_end))
+        Λ_start = (;λ_start, Ai)
+        return Flux.mse(vec(V_net(Λ_start)), vec(V_end))
     end
     return V_net
 end
@@ -33,11 +34,12 @@ function train_epoch!(V_net, opt, params; T=100, sample_t=50:100, init_state=not
         #batch = sample(data, length(sample_t)÷2)
         batch = data
         Flux.train!(V_net, batch, opt) do V_net, λ_start, Ai, V_end_lookahead
-            return Flux.mse(vec(V_net(λ_start, Ai)), vec(V_end_lookahead))
+            Λ_start = (;λ_start, Ai)
+            return Flux.mse(vec(V_net(Λ_start)), vec(V_end_lookahead))
         end
     end
 
-    mses = (Flux.mse(V_net(d[1], d[2]), d[3]) for d=data)
+    mses = (Flux.mse(V_net((;λ_start=d[1], Ai=d[2])), d[3]) for d=data)
     var_V = mean(var(vec(d[3]), ProbabilityWeights(vec(d[1]))) for d=data)
     last_error = mean(mses)/var_V
     init_state = (md, apply_aggregate_shock(Λ_end))
